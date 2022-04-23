@@ -8,10 +8,11 @@ import Router from "next/router";
 
 const { TabPane } = Tabs;
 
-export default function Profile() {
+export default function Profile({ isAdmin }) {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.login);
 
+  console.log(profile);
   const { Content } = Layout;
   return (
     <>
@@ -95,4 +96,12 @@ export default function Profile() {
       </Layout>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const isAdmin = true;
+
+  // Pass data to the page via props
+  return { props: { isAdmin } };
 }

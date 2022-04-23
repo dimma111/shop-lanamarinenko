@@ -2,10 +2,12 @@ import { Layout, Card, Col, Row, Breadcrumb, Image, Radio } from "antd";
 import React, { useState } from "react";
 import HeaderMain from "../components/HeaderMain";
 import Link from "next/link";
-import ProductItem from "../components/catalog/ProductItem";
+import ProductsList from "../components/catalog/ProductsList";
+import axios from "axios";
 
-export default function Catalog() {
+export default function Catalog({ products }) {
   const { Sider, Content } = Layout;
+
   return (
     <>
       <div className="header__dark">
@@ -36,18 +38,22 @@ export default function Catalog() {
             </Radio.Group>
           </div>
           <Row gutter={[16, 16]}>
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
-            <ProductItem />
+            <ProductsList products={products} />
           </Row>
         </Content>
       </Layout>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const { data } = await axios.get(
+    "http://localhost:5000/api/shop/getproducts"
+  );
+
+  return {
+    props: {
+      products: data,
+    },
+  };
 }

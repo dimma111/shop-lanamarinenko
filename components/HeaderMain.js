@@ -10,6 +10,7 @@ const { Header } = Layout;
 
 export default function HeaderMain(props) {
   const isAuth = useSelector((state) => state.login.isAuth);
+  const quantity = useSelector((state) => state.cart.cartTotalQuantity);
 
   return (
     <Header
@@ -69,6 +70,7 @@ export default function HeaderMain(props) {
       <div className="header__icons">
         <a href="#" className="header__icons__item">
           <ShoppingCartOutlined />
+          <span className="header__quantity">{quantity}</span>
         </a>
         <Link href={isAuth ? "/profile" : "/login"}>
           <a className="header__icons__item">
