@@ -4,9 +4,12 @@ import HeaderMain from "../components/HeaderMain";
 import Link from "next/link";
 import ProductsList from "../components/catalog/ProductsList";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { auth } from "../actions/user";
 
 export default function Catalog({ products }) {
   const { Sider, Content } = Layout;
+  // console.log(ctx);
 
   return (
     <>
@@ -46,10 +49,14 @@ export default function Catalog({ products }) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx) {
   const { data } = await axios.get(
     "http://localhost:5000/api/shop/getproducts"
   );
+  await auth();
+
+  // const profile = useSelector((state) => state.login);
+  // console.log(profile);
 
   return {
     props: {

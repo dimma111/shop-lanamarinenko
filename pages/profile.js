@@ -5,14 +5,28 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/login/loginSlice";
 import Router from "next/router";
+import WithAuth from "../components/WithAuth";
+import axios from "axios";
+import {
+  loginPending,
+  loginSuccess,
+  loginFail,
+} from "../features/login/loginSlice";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const { TabPane } = Tabs;
 
-export default function Profile({ isAdmin }) {
+// export default function Profile() {
+const Profile = (props) => {
   const dispatch = useDispatch();
+
+  if (props.data.user) {
+    dispatch(loginSuccess(props.data.user));
+  }
   const profile = useSelector((state) => state.login);
 
-  console.log(profile);
   const { Content } = Layout;
   return (
     <>
@@ -78,6 +92,7 @@ export default function Profile({ isAdmin }) {
                       onClick={() => {
                         dispatch(logout());
                         localStorage.removeItem("token");
+                        cookies.remove("token");
                         Router.push("/login");
                         message.success("Вы успешно вышли");
                       }}
@@ -96,12 +111,24 @@ export default function Profile({ isAdmin }) {
       </Layout>
     </>
   );
-}
+};
 
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const isAdmin = true;
+export default Profile;
 
-  // Pass data to the page via props
-  return { props: { isAdmin } };
+export async function getServerSideProps(ctx) {
+  try {
+    const token = ctx.req.cookies.token;
+    const response = await axios.get(`http://localhost:5000/api/auth/auth`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = response.data;
+    return { props: { data } };
+  } catch (e) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
 }

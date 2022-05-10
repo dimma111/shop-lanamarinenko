@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import Router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -29,6 +32,7 @@ export default function LoginForm() {
           console.log(response.data);
           dispatch(loginSuccess(response.data.user));
           localStorage.setItem("token", response.data.token);
+          cookies.set("token", response.data.token);
           Router.push("/profile");
         })
         .catch(function (error) {

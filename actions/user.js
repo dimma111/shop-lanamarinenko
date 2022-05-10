@@ -4,6 +4,9 @@ import {
   loginSuccess,
   loginFail,
 } from "../features/login/loginSlice";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export const auth = () => {
   return async (dispatch) => {
@@ -13,6 +16,8 @@ export const auth = () => {
       });
       dispatch(loginSuccess(response.data.user));
       localStorage.setItem("token", response.data.token);
+      cookies.set("token", response.data.token);
+      console.log(response);
     } catch (e) {
       console.log(e.response);
       localStorage.removeItem("token");
